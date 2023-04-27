@@ -1,0 +1,18 @@
+    the app is a to do app or a task manager the goal of the app is to manage time precisely the app will allow you to group tasks together for example sport group will have do pushups run for 20min and each task will have a duration the user can add the duration or the start and the end of task and it will be calculated automatically the app will have an alarm system to notify you if the task is due or the allocated time is finished you can also select a task and press start  and the timer for that task will start counting down the app will also allow you to specify date for task and have a calendar to show all task current and upcoming
+
+
+
+
+    1.User Authentication: Your app should have a user authentication system to allow users to create an account and login to access their tasks. This will also enable you to provide additional features such as syncing tasks across devices and allowing users to share tasks with others.
+
+    2.Task Prioritization: You can allow users to prioritize tasks by setting different levels of importance, so that the most important tasks are always at the top of the list.
+
+    3.Task Reminders: In addition to alarms, you can allow users to set reminders for their tasks, such as receiving a push notification or email a certain amount of time before the task is due.
+
+    4.Time Tracking: Your app can also include a time tracking feature that allows users to track the amount of time they spend on each task, providing them with insights into how they use their time.
+
+    6.So in the app, the user can create a reminder by selecting a task, specifying a date and time for the reminder, and choosing whether they want to be reminded by a notification, email, or some other means. This information can be stored in the reminders table in the database, and the app can use it to trigger notifications or other reminders to the user.
+
+    5.Reporting: Your app can provide users with detailed reports on their task completion rates and time spent on different types of tasks, allowing them to identify areas where they can improve their productivity.
+
+    7.Integrations: Consider integrating your app with other popular productivity tools, such as Google Calendar or Trello, to make it more useful and convenient for users.

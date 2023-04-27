@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+
+//main css file
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(206, 71, 247) rgb(252, 221, 221);
+}
