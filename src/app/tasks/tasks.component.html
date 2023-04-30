@@ -19,7 +19,8 @@
       <div
         (click)="toggle($event)"
         [id]="task.id"
-        class="z-10 grid grid-cols-12 items-center shadow-lg text-white rounded-3xl bg-blue-500 w-100 h-14 hover:scale-105 transition-all duration-300 focus:bg-slate-700 active:bg-slate-700"
+        [ngClass]="task.completed ? 'bg-green-500' : 'bg-blue-500'"
+        class="z-10 grid grid-cols-12 items-center shadow-lg text-white rounded-3xl w-100 h-14 hover:scale-105 transition-all duration-300 focus:bg-slate-700 active:bg-slate-700"
       >
         <mat-icon class="col-span-1 ml-2" [id]="'expand_task_' + task.id"
           >expand_more</mat-icon
@@ -33,10 +34,10 @@
           <div
             [id]="'edit_task_' + task.id"
             (click)="editTask(task.id)"
-            class="bg-blue-400 rounded-full p-1 w-8 h-8 active:bg-blue-600 hover:bg-blue-300 cursor-pointer"
+            class="bg-yellow-400 rounded-full p-1 w-8 h-8 active:bg-yellow-600 hover:bg-yellow-300 hover:scale-105 cursor-pointer"
           >
             <mat-icon
-              class="text-yellow-300"
+              class="text-slate-800"
               aria-hidden="false"
               aria-label="Example home icon"
               >edit</mat-icon
@@ -45,10 +46,10 @@
           <div
             [id]="'edit_task_' + task.id"
             (click)="deleteTask(task.id)"
-            class="bg-blue-400 rounded-full p-1 w-8 h-8 active:bg-blue-600 hover:bg-blue-300 cursor-pointer"
+            class="bg-red-500 rounded-full p-1 w-8 h-8 active:bg-red-600 hover:bg-red-300 hover:scale-105 cursor-pointer"
           >
             <mat-icon
-              class="text-red-500"
+              class="text-slate-800"
               aria-hidden="false"
               aria-label="Example home icon"
               >delete</mat-icon
@@ -57,19 +58,25 @@
         </div>
       </div>
       <div
+        [ngClass]="task.completed ? 'bg-green-400' : 'bg-blue-400'"
         class="h-auto w-100 bg-blue-400 mx-6 rounded-b-3xl hidden duration-500 ease-out transition-all"
         [id]="'task_' + task.id"
       >
         <div class="flex flex-col">
-          <div class="ml-3">
-            <mat-checkbox [(ngModel)]="task.completed"
+          <div class="ml-3 my-2">
+            <mat-checkbox
+              [(ngModel)]="task.completed"
+              (click)="markAsCompleted(task.id)"
               ><span class="text-white">{{ task.name }}</span></mat-checkbox
             >
           </div>
-          <div class="flex justify-start ml-5">
+          <mat-divider></mat-divider>
+          <div class="flex justify-start ml-5 my-2">
             <span class="text-white font-medium mt-2">
               - Task duration :
-              <span class="text-green-700"> {{ task.duration }}</span>
+              <span class="text-violet-700 font-extrabold">
+                {{ task.duration }}</span
+              >
             </span>
             <div class="flex justify-center gap-2 ml-3">
               <div
@@ -88,7 +95,34 @@
               </div>
             </div>
           </div>
-          <div class="ml-5 w-1/2 mt-4"></div>
+          <mat-divider></mat-divider>
+          <div class="ml-5 my-2">
+            <span class="text-white font-medium">- Task Due Date : </span
+            ><span class="text-violet-700 font-extrabold">{{
+              task.dueDate | date
+            }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="ml-5 my-2">
+            <span class="text-white font-medium">- From &nbsp;</span
+            ><span class="text-violet-700 font-extrabold">{{
+              task.startTime
+            }}</span>
+
+            <span class="text-white font-medium"> To &nbsp; </span
+            ><span class="text-violet-700 font-extrabold">{{
+              task.endTime
+            }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="ml-5 my-2">
+            <span class="text-white font-medium">- Progress : </span
+            ><span class="text-violet-700 font-extrabold">{{
+              task.progress
+            }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="ml-5 w-1/2 my-2"></div>
         </div>
       </div>
     </div>

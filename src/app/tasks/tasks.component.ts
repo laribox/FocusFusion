@@ -160,4 +160,12 @@ export class TasksComponent implements OnInit {
       this.getTasksByCategory();
     });
   }
+
+  markAsCompleted(task_id: string) {
+    let task = this.tasks.find((task) => task.id == task_id)!;
+    console.log(
+      'mark as complete ' + task_id + ' taks ' + JSON.stringify(task)
+    );
+    this.tasksService.editTask(task_id, task);
+  }
 }
