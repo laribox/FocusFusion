@@ -138,6 +138,11 @@ export class TasksComponent implements OnInit {
     }
   }
 
+  /**
+   *
+   * @param task_id
+   * edit task
+   */
   editTask(task_id: string) {
     console.log('edit ' + task_id);
     console.log('open edit task dialog');
