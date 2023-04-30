@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { CategoryComponent } from './category/category.component';
-import { TodoComponent } from './todo/todo.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +13,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IconsDialogComponent } from './category/icons-dialog/icons-dialog.component';
+import { TasksComponent } from './tasks/tasks.component';
+import { AddTaskDialogComponent } from './tasks/add-task-dialog/add-task-dialog.component';
+import { DatePipe } from '@angular/common';
+import { IMaskModule } from 'angular-imask';
 
 @NgModule({
   declarations: [
@@ -22,10 +32,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NavbarComponent,
     FooterComponent,
     CategoryComponent,
-    TodoComponent,
+    IconsDialogComponent,
+    TasksComponent,
+    AddTaskDialogComponent,
   ],
   imports: [
     BrowserModule,
+    IMaskModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatInputModule,
@@ -35,6 +48,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatCardModule,
     MatDividerModule,
     MatIconModule,
+    MatDialogModule,
+    MatCheckboxModule,
+    MatExpansionModule,
+    MatProgressBarModule,
+    MatSlideToggleModule,
+    MatSelectModule,
   ],
   exports: [
     BrowserModule,
@@ -47,8 +66,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatCardModule,
     MatDividerModule,
     MatIconModule,
+    MatDialogModule,
+    MatCheckboxModule,
+    MatExpansionModule,
+    MatProgressBarModule,
+    MatSlideToggleModule,
+    MatSelectModule,
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

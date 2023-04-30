@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CategoryComponent } from './category/category.component';
-import { TodoComponent } from './todo/todo.component';
+import { TasksComponent } from './tasks/tasks.component';
 
 const routes: Routes = [
   {
@@ -9,8 +9,8 @@ const routes: Routes = [
     component: CategoryComponent,
   },
   {
-    path: 'todo',
-    component: TodoComponent,
+    path: 'tasks/:id',
+    component: TasksComponent,
   },
 ];
 

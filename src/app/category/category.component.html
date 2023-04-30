@@ -1,89 +1,92 @@
 <div class="grid grid-cols-12 justify-center">
   <div class="col-span-12 text-center">
     <h1 class="text-blue-600">Focus CATEGORIES</h1>
-    <p class="text-info">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-    </p>
+    <p class="text-green-500">Add Edit Or Delete any Category</p>
   </div>
 </div>
 
 <form action="" class="form-inline">
-  <div class="grid grid-cols-12 gap-2">
-    <mat-form-field class="col-span-10">
+  <div class="grid grid-cols-12 gap-1">
+    <mat-form-field class="col-span-11">
       <mat-label>Category</mat-label>
       <input
+        minlength="1"
         type="text"
         matInput
-        [formControl]="category"
+        [formControl]="categoryInput"
         placeholder="Ex. sport project"
       />
-      <mat-error> Please enter a valid email address </mat-error>
+      <mat-error> cannot be empty</mat-error>
       <mat-error> Email is <strong>required</strong> </mat-error>
     </mat-form-field>
-    <div class="col-span-2">
+    <div class="col-span-1 flex flex-row gap-2 justify-start mt-2">
       <button
-        class="w-40 text-lg"
-        style="height: 3.3rem"
-        mat-raised-button
-        color="primary"
+        data-modal-target="popup-modal"
+        data-modal-toggle="popup-modal"
+        mat-mini-fab
+        class="hover:-translate-y-1 hover:scale-110"
+        color="warn"
+        aria-label="Example icon button with a add icon"
+        (click)="openIconsDialog()"
       >
-        Add
+        <mat-icon>photo_size_select_actual</mat-icon>
+      </button>
+
+      <button
+        mat-mini-fab
+        class="hover:-translate-y-1 hover:scale-110 hover:animate-none"
+        color="primary"
+        aria-label="Example icon button with a add icon"
+        (click)="buttonSubmit()"
+        [ngClass]="{ 'animate-pulse': submitButtonValue == 'edit' }"
+      >
+        <mat-icon>{{ submitButtonValue }}</mat-icon>
       </button>
     </div>
   </div>
 </form>
 
-<div class="grid grid-cols-12">
+<div class="grid grid-cols-12 gap-1 relative">
   <div
-    class="col-span-2 w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+    class="absolute z-50 top-0 left-0 bottom-0 right-0 backdrop-blur-sm h-100 w-100 bg-white/30 {{
+      hidden
+    }}"
+  ></div>
+  <div
+    *ngFor="let category of categories"
+    class="col-span-2 w-full max-w-sm border border-gray-200 rounded-lg shadow even:bg-slate-600 odd:bg-slate-700 dark:border-gray-700"
   >
-    <!-- edit and add icon at the top-->
-    <!--<div class="flex justify-end px-4 pt-4">
-      <mat-icon class="text-white hover:text-pink-500 mx-1 rounded-lg"
-        >edit</mat-icon
-      >
-      <mat-icon class="text-white hover:text-pink-500">delete</mat-icon>
-    </div>-->
-    <div class="flex flex-col items-center pb-10 mt-6">
-      <img
-        class="w-24 h-24 mb-3 rounded-full shadow-lg"
-        src="assets/img/together.png"
-        alt="Bonnie image"
-      />
-      <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-        Bonnie Green
-      </h5>
-      <span class="text-sm text-gray-500 dark:text-gray-400"
-        >Visual Designer</span
-      >
-      <div class="flex mt-4 space-x-3 md:mt-6">
+    <div class="flex flex-col items-center pb-8 mt-6">
+      <a [routerLink]="['/tasks', category.id]">
+        <img
+          class="w-24 h-24 mb-3 rounded-full shadow-lg hover:animate-pulse ease-out cursor-pointer"
+          src="{{ iconsPath + category.icon }}"
+          alt="{{ category.name }}"
+      /></a>
+      <h2 class="pt-5 text-xl font-medium text-gray-900 dark:text-white">
+        {{ category.name }}
+      </h2>
+
+      <div class="flex lg:space-x-3 md:mt-6 mt-2 md:flex-row sm:flex-col">
         <button
           mat-mini-fab
-          class="bg-red-700 hover:bg-red-500 h-3"
-          aria-label="Example icon button with a delete icon"
+          color="warn"
+          class="hover:-translate-y-1 hover:scale-110"
+          aria-label="Example icon button with a edit icon"
+          (click)="changeSubmitState(category.id)"
         >
           <mat-icon>edit</mat-icon>
         </button>
         <button
           mat-mini-fab
           color="primary"
+          class="hover:-translate-y-1 hover:scale-110"
           aria-label="Example icon button with a delete icon"
+          (click)="removeCategory(category.id)"
         >
           <mat-icon>delete</mat-icon>
         </button>
       </div>
     </div>
   </div>
-
-  <!--<mat-card class="col-span-2 shadow-lg rounded-3xl">
-    <mat-card-header>
-      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-      <mat-card-title>Shiba Inu</mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content>
-      <p>This card has divider and indeterminate progress as footer</p>
-      <p>{{ longText }}</p>
-    </mat-card-content>
-  </mat-card>-->
 </div>

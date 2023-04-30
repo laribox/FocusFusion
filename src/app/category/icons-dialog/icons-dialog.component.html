@@ -1,0 +1,14 @@
+<h1 mat-dialog-title [mat-dialog-close]="data">Icon Selector</h1>
+<div mat-dialog-content>
+  <p>Choose an Icon</p>
+  <div class="flex flex-row gap-2">
+    <img
+      class="will-change-contents w-24 h-24 mb-3 rounded-full shadow-lg hover:animate-pulse hover:-translate-y-1 hover:scale-105 delay-75 duration-200 hover:ring-2 ring-orange-500"
+      *ngFor="let icon of icons"
+      [src]="iconsPath + '/' + icon"
+      alt="icon"
+      (click)="pickIcon(icon)"
+    />
+  </div>
+</div>
+<div mat-dialog-actions></div>

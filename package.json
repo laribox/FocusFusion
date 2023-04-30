@@ -25,7 +25,9 @@
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "angular-imask": "^6.6.1",
     "bootstrap": "^5.2.3",
+    "pocketbase": "^0.14.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"

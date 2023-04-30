@@ -1,0 +1,117 @@
+<h1 mat-dialog-title>Add Task Dialog</h1>
+<div mat-dialog-content>
+  <form class=" " [formGroup]="taskForm">
+    <div class="flex flex-row justify-between gap-3">
+      <mat-form-field class="">
+        <mat-label>Name</mat-label>
+        <input
+          formControlName="name"
+          matInput
+          placeholder="Ex. do something"
+          value=""
+        />
+      </mat-form-field>
+      <mat-form-field class=" ">
+        <mat-label> Duration</mat-label>
+        <input
+          [imask]="{ mask: '00:00:00', autofix: true, lazy: false }"
+          formControlName="duration"
+          matInput
+          placeholder="Ex.06:20:00"
+          value=""
+        />
+      </mat-form-field>
+      <mat-form-field class=" ">
+        <mat-label>due Date</mat-label>
+        <input
+          formControlName="dueDate"
+          matInput
+          type="date"
+          placeholder="Ex.    "
+          value=""
+        />
+      </mat-form-field>
+    </div>
+
+    <div class="flex flex-row justify-evenly gap-3">
+      <mat-form-field class="w-full">
+        <mat-label>Start Time</mat-label>
+        <input
+          [imask]="{ mask: '00:00:00', autofix: true, lazy: false }"
+          formControlName="startTime"
+          matInput
+          placeholder="Ex. do something"
+          value=""
+        />
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label> End Time</mat-label>
+        <input
+          [imask]="{ mask: '00:00:00', autofix: true, lazy: false }"
+          formControlName="endTime"
+          matInput
+          placeholder="Ex.06:20:00"
+          value=""
+        />
+      </mat-form-field>
+    </div>
+    <div class="flex flex-row justify-between gap-3">
+      <div class="w-full bg-gray-100 h-14">
+        <mat-slide-toggle
+          formControlName="recurring"
+          color="primary"
+          class="mt-4 ml-4"
+          >Recurring</mat-slide-toggle
+        >
+      </div>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Task Frequency</mat-label>
+        <mat-select formControlName="recurrenceFrequency" name="food">
+          <mat-option
+            *ngFor="let Frequency of recurrenceFrequency"
+            [value]="Frequency"
+          >
+            {{ Frequency }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label> interval</mat-label>
+        <input
+          formControlName="recurrenceInterval"
+          matInput
+          placeholder="Ex.1-7"
+          value=""
+        />
+      </mat-form-field>
+    </div>
+    <div class="flex">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Progress</mat-label>
+        <mat-select formControlName="progress" name="food">
+          <mat-option value="Started">To-Do</mat-option>
+          <mat-option value="Started">Started</mat-option>
+          <mat-option value="Started">In Progress</mat-option>
+          <mat-option value="Started">On Hold</mat-option>
+          <mat-option value="Started">Completed</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="flex justify-between">
+      <mat-slide-toggle
+        formControlName="completed"
+        color="warn"
+        class="mt-4 ml-4"
+        >Completed</mat-slide-toggle
+      >
+      <div
+        (click)="save()"
+        class="cursor-pointer rounded-full p-2 pb-2 px-6 text-white font-semibold bg-violet-500 hover:bg-violet-600 active:bg-violet-700"
+      >
+        {{ submitButtonValue }}
+      </div>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions></div>
