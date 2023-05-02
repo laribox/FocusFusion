@@ -4,12 +4,14 @@ import {
   ChangeDetectorRef,
   Component,
   Inject,
-  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Category } from 'src/app/classes/category';
 import { Task } from 'src/app/classes/task';
+import { CategoryService } from 'src/app/services/category.service';
+import { TasksComponent } from '../tasks.component';
 
 @Component({
   selector: 'app-add-task-dialog',
@@ -18,6 +20,8 @@ import { Task } from 'src/app/classes/task';
 })
 export class AddTaskDialogComponent implements OnInit, AfterViewInit {
   recurrenceFrequency = ['daily', 'weekly', 'monthly', 'yearly'];
+  categories = TasksComponent.categories;
+
   taskForm!: FormGroup;
   submitButtonValue: string = 'Save';
 
@@ -73,10 +77,6 @@ export class AddTaskDialogComponent implements OnInit, AfterViewInit {
   save() {
     //console.log(this.taskForm.getRawValue());
     this.data = this.taskForm.getRawValue();
-    this.dialogRef.close(this.data);
-  }
-  pickIcon(icon: string) {
-    this.data = icon;
     this.dialogRef.close(this.data);
   }
 }

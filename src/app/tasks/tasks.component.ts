@@ -79,9 +79,11 @@ export class TasksComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.tasksService.addTask(result).then((res) => {
-        this.getTasks();
-      });
+      if (result != undefined) {
+        this.tasksService.addTask(result).then((res) => {
+          this.getTasks();
+        });
+      }
     });
   }
   //* counting down timer for tasks *//
@@ -258,9 +260,6 @@ export class TasksComponent implements OnInit {
         } else if (this.SelectedFilter == 'Today') {
           this.getTodayTasks();
           this.groupBy = false;
-        } else {
-          this.groupBy = false;
-          this.getAllTasks();
         }
       });
     }
