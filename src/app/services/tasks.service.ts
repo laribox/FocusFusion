@@ -67,7 +67,7 @@ export class TasksService {
     return await pb
       .collection('tasks')
       .getFullList({
-        sort: '-created',
+        sort: 'created',
         filter: `categoryId = "${categoryId}"`,
       })
       .then((res) =>
@@ -106,7 +106,32 @@ export class TasksService {
 
   getTasksByStatus(status: string) {}
 
-  getAllTasks() {}
+  getAllTasks() {
+    return pb
+      .collection('tasks')
+      .getFullList()
+      .then((res) =>
+        res.map(
+          (element) =>
+            new Task(
+              element.id,
+              element['name'],
+              element['duration'],
+              element['dueDate'],
+              element['startTime'],
+              element['endTime'],
+              element['categoryId'],
+              element['recurring'],
+              element['recurrenceFrequency'],
+              element['recurrenceInterval'],
+              element['progress'],
+              element['completed'],
+              element['created'],
+              element['updated']
+            )
+        )
+      );
+  }
 
   getTaskById(taskId: string) {}
 }

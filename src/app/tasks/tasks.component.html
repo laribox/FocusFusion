@@ -1,36 +1,87 @@
 <div class="grid grid-cols-12 justify-center">
   <div class="col-span-12 text-center">
     <h1 class="text-blue-600">Focus Tasks</h1>
-    <p class="text-green-500">Add Edit Or Delete any Category</p>
-  </div>
-  <div
-    (click)="addTask()"
-    class="flex justify-center items-center col-start-6 col-span-2 font-medium text-white shadow-lg rounded-full bg-violet-500 p-5 hover:bg-violet-600 cursor-pointer active:bg-violet-700 h-5 hover:-translate-y-1 hover:scale-105 transition-all duration-300"
-  >
-    Add New Task
+    <div class="grid grid-cols-12 gap-4">
+      <div
+        class="col-span-9 flex space-x-1 border-2 border-violet-500 p-3 rounded-2xl bg-slate-100"
+      >
+        <div class="relative w-full">
+          <input
+            type="search"
+            id="search"
+            class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-lg border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Search"
+            required
+          />
+          <button
+            class="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 active:ring-4 active:outline-none active:ring-blue-300"
+          >
+            <svg
+              aria-hidden="true"
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div
+        class="col-span-3 col-start-10 col-end-13 flex justify-center space-x-1 border-2 border-violet-500 p-3 rounded-2xl bg-slate-100"
+      >
+        <div
+          (click)="addTask()"
+          class="flex justify-center items-center col-start-6 col-span-2 font-medium text-white shadow-lg rounded-full bg-violet-500 p-5 hover:bg-violet-600 cursor-pointer active:bg-violet-700 h-5 hover:-translate-y-1 hover:scale-105 transition-all duration-300"
+        >
+          Add New Task
+        </div>
+        <div>
+          <select
+            matNativeControl
+            [(ngModel)]="SelectedFilter"
+            (change)="filterBy()"
+            class="bg-slate-600 px-2 h-full rounded-full text-center text-white hover:bg-slate-500"
+          >
+            <option value="All" selected>All</option>
+            <option value="Today">Today</option>
+            <option value="GroupByCategory">Group By Category</option>
+            <option value="GroupByDate">Group By Date</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <br />
 
-<div class="container">
+<div class="container" *ngIf="groupBy == false">
   <div class="grid grid-cols-12 c gap-5 z-10">
     <div *ngFor="let task of tasks" class="col-span-4">
       <div
         (click)="toggle($event)"
         [id]="task.id"
         [ngClass]="task.completed ? 'bg-green-500' : 'bg-blue-500'"
-        class="z-10 grid grid-cols-12 items-center shadow-lg text-white rounded-3xl w-100 h-14 hover:scale-105 transition-all duration-300 focus:bg-slate-700 active:bg-slate-700"
+        class="z-10 grid grid-cols-12 items-center shadow-lg text-white rounded-3xl w-100 h-auto min-h-[60px] hover:scale-105 transition-all duration-300 focus:bg-slate-700 active:bg-slate-700"
       >
         <mat-icon class="col-span-1 ml-2" [id]="'expand_task_' + task.id"
           >expand_more</mat-icon
         >
         <span
-          class="col-span-6 col-start-4 mx-7 font-medium text-lg text-center pointer-events-none"
+          class="col-span-6 col-start-4 mx-7 font-medium text-lg text-center truncate pointer-events-none"
         >
           {{ task.name }}</span
         >
-        <div class="col-span-4 col-start-10 flex flex-row space-x-2">
+        <div class="col-span-4 col-start-10 flex flex-row space-x-2 flex-wrap">
           <div class="rounded-full mt-1">
             <mat-slide-toggle
               (click)="markAsCompleted(task.id)"
@@ -75,6 +126,14 @@
         <div class="flex flex-col">
           <div class="flex justify-start ml-5 my-2">
             <span class="text-white font-medium mt-2">
+              - Task :
+              <span class="text-violet-700 font-extrabold">
+                {{ task.name }}</span
+              >
+            </span>
+          </div>
+          <div class="flex justify-start ml-5 my-2">
+            <span class="text-white font-medium mt-2">
               - Task duration :
               <span class="text-violet-700 font-extrabold">
                 {{ task.duration }}</span
@@ -84,6 +143,11 @@
               <div
                 (click)="startTimer(task.id)"
                 [id]="'start_task_' + task.id"
+                [ngClass]="{
+                  'pointer-events-none': task.duration == '00:00:00',
+                  'bg-slate-600': task.duration == '00:00:00'
+                }"
+                [innerHTML]="task.duration == '00:00:00' ? 'finished' : 'start'"
                 class="flex justify-center items-center col-start-6 col-span-2 font-medium text-white shadow-lg rounded-full bg-violet-500 p-5 hover:bg-violet-600 cursor-pointer active:bg-violet-700 h-5 hover:-translate-y-1 hover:scale-105 transition-all duration-300"
               >
                 Start
@@ -125,6 +189,154 @@
           </div>
           <mat-divider></mat-divider>
           <div class="ml-5 w-1/2 my-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="groupBy">
+  <div
+    *ngFor="let taskGroup of tasksGroupedBy | keyvalue"
+    class="border-2 rounded-md border-violet-500 z-10 mt-3 text-lg"
+  >
+    <div
+      class="bg-violet-500 text-white text-center align-middle w-fit rounded-br-lg px-2"
+    >
+      <p *ngIf="SelectedFilter == 'GroupByDate'">{{ taskGroup.key }}</p>
+      <p *ngIf="SelectedFilter == 'GroupByCategory'">
+        {{ taskGroup.key | catName }}
+      </p>
+    </div>
+    <div class="grid grid-cols-12 gap-5 pt-2 px-3 pb-3">
+      <div *ngFor="let task of taskGroup.value" class="col-span-4">
+        <div
+          (click)="toggle($event)"
+          [id]="task.id"
+          [ngClass]="task.completed ? 'bg-green-500' : 'bg-blue-500'"
+          class="z-10 grid grid-cols-12 items-center shadow-lg text-white rounded-3xl w-100 h-auto min-h-[60px] hover:scale-105 transition-all duration-300 focus:bg-slate-700 active:bg-slate-700"
+        >
+          <mat-icon class="col-span-1 ml-2" [id]="'expand_task_' + task.id"
+            >expand_more</mat-icon
+          >
+          <span
+            class="col-span-6 col-start-4 mx-7 font-medium text-lg text-center truncate pointer-events-none"
+          >
+            {{ task.name }}</span
+          >
+          <div
+            class="col-span-4 col-start-10 flex flex-row space-x-2 flex-wrap"
+          >
+            <div class="rounded-full mt-1">
+              <mat-slide-toggle
+                (click)="markAsCompleted(task.id)"
+                [(ngModel)]="task.completed"
+                color="primary"
+              >
+              </mat-slide-toggle>
+            </div>
+
+            <div
+              [id]="'edit_task_' + task.id"
+              (click)="editTask(task.id)"
+              class="bg-yellow-400 rounded-full p-1 w-8 h-8 active:bg-yellow-600 hover:bg-yellow-300 hover:scale-105 cursor-pointer"
+            >
+              <mat-icon
+                class="text-slate-800"
+                aria-hidden="false"
+                aria-label="Example home icon"
+                >edit</mat-icon
+              >
+            </div>
+
+            <div
+              [id]="'edit_task_' + task.id"
+              (click)="deleteTask(task.id)"
+              class="bg-red-500 rounded-full p-1 w-8 h-8 active:bg-red-600 hover:bg-red-300 hover:scale-105 cursor-pointer"
+            >
+              <mat-icon
+                class="text-slate-800"
+                aria-hidden="false"
+                aria-label="Example home icon"
+                >delete</mat-icon
+              >
+            </div>
+          </div>
+        </div>
+        <div
+          [ngClass]="task.completed ? 'bg-green-400' : 'bg-blue-400'"
+          class="h-auto w-100 bg-blue-400 mx-6 rounded-b-3xl hidden duration-500 ease-out transition-all"
+          [id]="'task_' + task.id"
+        >
+          <div class="flex flex-col">
+            <div class="flex justify-start ml-5 my-2">
+              <span class="text-white font-medium mt-2">
+                - Task :
+                <span class="text-violet-700 font-extrabold">
+                  {{ task.name }}</span
+                >
+              </span>
+            </div>
+            <div class="flex justify-start ml-5 my-2">
+              <span class="text-white font-medium mt-2">
+                - Task duration :
+                <span class="text-violet-700 font-extrabold">
+                  {{ task.duration }}</span
+                >
+              </span>
+              <div class="flex justify-center gap-2 ml-3">
+                <div
+                  (click)="startTimer(task.id)"
+                  [id]="'start_task_' + task.id"
+                  [ngClass]="{
+                    'pointer-events-none': task.duration == '00:00:00',
+                    'bg-slate-600': task.duration == '00:00:00'
+                  }"
+                  [innerHTML]="
+                    task.duration == '00:00:00' ? 'finished' : 'start'
+                  "
+                  class="flex justify-center items-center col-start-6 col-span-2 font-medium text-white shadow-lg rounded-full bg-violet-500 p-5 hover:bg-violet-600 cursor-pointer active:bg-violet-700 h-5 hover:-translate-y-1 hover:scale-105 transition-all duration-300"
+                >
+                  Start
+                </div>
+                <div
+                  (click)="resetTimer(task.id)"
+                  [id]="'rest_task_' + task.id"
+                  class="flex justify-center items-center col-start-6 col-span-2 font-medium text-white shadow-lg rounded-full bg-violet-500 p-5 hover:bg-violet-600 cursor-pointer active:bg-violet-700 h-5 hover:-translate-y-1 hover:scale-105 transition-all duration-300"
+                >
+                  Reset
+                </div>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="ml-5 my-2">
+              <span class="text-white font-medium">- Task Due Date : </span
+              ><span class="text-violet-700 font-extrabold">{{
+                task.dueDate | date
+              }}</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="ml-5 my-2">
+              <span class="text-white font-medium">- From &nbsp;</span
+              ><span class="text-violet-700 font-extrabold">{{
+                task.startTime
+              }}</span>
+
+              <span class="text-white font-medium"> To &nbsp; </span
+              ><span class="text-violet-700 font-extrabold">{{
+                task.endTime
+              }}</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="ml-5 my-2">
+              <span class="text-white font-medium">- Progress : </span
+              ><span class="text-violet-700 font-extrabold">{{
+                task.progress
+              }}</span>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="ml-5 w-1/2 my-2"></div>
+          </div>
         </div>
       </div>
     </div>

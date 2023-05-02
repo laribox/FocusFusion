@@ -21,10 +21,16 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconsDialogComponent } from './category/icons-dialog/icons-dialog.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { TasksComponent } from './tasks/tasks.component';
 import { AddTaskDialogComponent } from './tasks/add-task-dialog/add-task-dialog.component';
 import { DatePipe } from '@angular/common';
 import { IMaskModule } from 'angular-imask';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthenticationComponent } from './authentication/authentication.component';
+import { CalenderComponent } from './calender/calender.component';
+import { CatNamePipe } from './cat-name.pipe';
 
 @NgModule({
   declarations: [
@@ -35,6 +41,10 @@ import { IMaskModule } from 'angular-imask';
     IconsDialogComponent,
     TasksComponent,
     AddTaskDialogComponent,
+    DashboardComponent,
+    AuthenticationComponent,
+    CalenderComponent,
+    CatNamePipe,
   ],
   imports: [
     BrowserModule,
@@ -54,6 +64,8 @@ import { IMaskModule } from 'angular-imask';
     MatProgressBarModule,
     MatSlideToggleModule,
     MatSelectModule,
+    MatSnackBarModule,
+    MatSidenavModule,
   ],
   exports: [
     BrowserModule,
@@ -72,6 +84,8 @@ import { IMaskModule } from 'angular-imask';
     MatProgressBarModule,
     MatSlideToggleModule,
     MatSelectModule,
+    MatSnackBarModule,
+    MatSidenavModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

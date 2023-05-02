@@ -6,6 +6,8 @@ import { TasksService } from '../services/tasks.service';
 import { CategoryService } from '../services/category.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Category } from '../classes/category';
 
 @Component({
   selector: 'app-tasks',
@@ -14,24 +16,33 @@ import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.compon
 })
 export class TasksComponent implements OnInit {
   categoryId: string = this.route.snapshot.paramMap.get('id') || '';
+  static categories: Category[] = [];
   tasks: Task[] = [];
   categoryName: string | undefined = '';
+  notificationAudio = new Audio('/assets/sounds/notification.mp3');
   countdowntimer = {
     busy: false,
     task_id: '',
     originalValue: '00:00:00',
   };
   timer: any;
-  component: TasksComponent = this;
+  SelectedFilter = 'All';
+  tasksGroupedBy: object = {};
+  groupBy = false;
+
   constructor(
     private route: ActivatedRoute,
     private tasksService: TasksService,
     private categoryService: CategoryService,
+    private _snackBar: MatSnackBar,
     public dialog: MatDialog
   ) {}
   ngOnInit(): void {
-    this.getTasksByCategory();
-    // this.getAllTasks();
+    Notification.requestPermission();
+    this.categoryService
+      .getCategories()
+      .then((data) => (TasksComponent.categories = data));
+    this.getTasks();
   }
 
   toggle(event: any) {
@@ -44,37 +55,54 @@ export class TasksComponent implements OnInit {
         expand.innerHTML == 'expand_more' ? 'expand_less' : 'expand_more';
     }
   }
-
+  //* check url for category id and fill the data based on that *//
+  getTasks() {
+    if (this.categoryId == '') {
+      this.getAllTasks();
+    } else {
+      this.getTasksByCategory();
+    }
+  }
   getTasksByCategory() {
     this.tasksService.getTasksByCategory(this.categoryId!).then((res) => {
       this.tasks = res;
     });
   }
+  //** get all tasks */
+  getAllTasks() {
+    this.tasksService.getAllTasks().then((data) => {
+      this.tasks = data;
+    });
+  }
 
   //* Open add task dialog *//
   addTask() {
-    console.log('open add task dialog');
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
       data: this.categoryId,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
       this.tasksService.addTask(result);
       this.ngOnInit();
     });
   }
   //* counting down timer for tasks *//
   countdownTimeStart(task_id: string) {
-    let index = this.tasks.indexOf(
-      this.tasks.find((task) => task.id == task_id)!
-    );
+    let index = this.tasks.findIndex((task) => task.id == task_id);
     let time = this.tasks[index].duration.split(':');
     let seconds = +time[0] * 60 * 60 + +time[1] * 60 + +time[2];
     if (seconds == 0) {
       this.tasks[index].completed = true;
 
       this.stopTimer(this.tasks[index].id);
+
+      if (Notification.permission === 'granted') {
+        new Notification('Task completed', {
+          body: 'Your task has been completed!',
+          icon: '/path/to/notification-icon.png',
+        });
+        this.notificationAudio.play();
+      }
     } else {
       seconds--;
       this.tasks[index].duration = new Date(seconds * 1000)
@@ -84,11 +112,27 @@ export class TasksComponent implements OnInit {
   }
 
   resetTimer(task_id: string) {
+    let index = this.tasks.findIndex((task) => task.id == task_id);
+    let startTime = this.tasks[index].startTime.split(':');
+    let endTime = this.tasks[index].endTime.split(':');
+
+    let startSeconds =
+      parseInt(startTime[0]) * 60 * 60 +
+      parseInt(startTime[1]) * 60 +
+      parseInt(startTime[2]);
+    let endSeconds =
+      parseInt(endTime[0]) * 60 * 60 +
+      parseInt(endTime[1]) * 60 +
+      parseInt(endTime[2]);
+    let duration = endSeconds - startSeconds;
+
+    this.tasks[index].duration = new Date(duration * 1000)
+      .toISOString()
+      .substring(11, 19);
+    this.tasks[index].completed = false;
+    this.tasksService.editTask(task_id, this.tasks[index]);
     if (this.countdowntimer.task_id == task_id) {
       this.stopTimer(task_id);
-      this.tasks.find((task) => task.id == task_id)!.duration =
-        this.countdowntimer.originalValue;
-      this.startTimer(task_id);
     }
   }
   //* stop timer for tasks *//
@@ -97,14 +141,12 @@ export class TasksComponent implements OnInit {
 
     this.countdowntimer.busy = false;
     this.countdowntimer.task_id = '';
-    //console.log(this.tasks.find((task) => task.id == task_id)!);
 
     this.tasksService.editTask(
       task_id,
       this.tasks.find((task) => task.id == task_id)!
     );
 
-    console.log('counter stopped');
     let startButton: any = document.querySelector('#start_task_' + task_id);
     startButton.innerHTML = 'Start';
   }
@@ -114,16 +156,17 @@ export class TasksComponent implements OnInit {
     let startButton: any = document.querySelector('#start_task_' + task_id);
 
     if (this.countdowntimer.busy == false) {
-      console.log('counter started for ' + task_id);
+      this._snackBar.open('Count down started', '', {
+        duration: 3000,
+      });
+
       //change startButton value
       startButton.innerHTML = 'Stop';
       let selected_task: Task = this.tasks.find((task) => task.id == task_id)!;
-      let index: number = this.tasks.indexOf(selected_task);
 
       this.countdowntimer.busy = true;
       this.countdowntimer.task_id = task_id;
       this.countdowntimer.originalValue = selected_task.duration;
-      this.tasks[index].duration = this.countdowntimer.originalValue;
 
       this.countdownTimeStart(task_id);
 
@@ -131,46 +174,110 @@ export class TasksComponent implements OnInit {
         this.countdownTimeStart(task_id);
       }, 1000);
     } else {
+      this._snackBar.open('Count down stopped', '', {
+        duration: 3000,
+      });
       if (this.countdowntimer.task_id == task_id) {
         this.stopTimer(task_id);
       }
-      console.log('counter busy');
     }
   }
 
-  /**
-   *
-   * @param task_id
-   * edit task
-   */
+  //** edit task   */
   editTask(task_id: string) {
-    console.log('edit ' + task_id);
-    console.log('open edit task dialog');
     let task: Task = this.tasks.find((task) => task.id == task_id)!;
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
       data: task,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
       this.tasksService.editTask(task_id, result).then(() => {
-        this.getTasksByCategory();
+        this.getTasks();
       });
     });
   }
   // ** delete task */
   deleteTask(task_id: string) {
-    console.log('delete ' + task_id);
-    this.tasksService.deleteTask(task_id).then(() => {
-      this.getTasksByCategory();
-    });
+    if (confirm('You sure you want to delete this task')) {
+      this.tasksService.deleteTask(task_id).then(() => {
+        this.getTasks();
+      });
+    }
   }
-
+  //** mark task as completed */
   markAsCompleted(task_id: string) {
     let task = this.tasks.find((task) => task.id == task_id)!;
-    console.log(
-      'mark as complete ' + task_id + ' taks ' + JSON.stringify(task)
-    );
+
     this.tasksService.editTask(task_id, task);
+  }
+  //** filter tasks by    *//
+  filterBy() {
+    if (this.SelectedFilter == 'GroupByDate') {
+      this.groupBy = true;
+      this.tasksGroupedBy = this.groupByDate();
+    } else if (this.SelectedFilter == 'GroupByCategory') {
+      this.groupBy = true;
+      this.tasksGroupedBy = this.groupByCategory();
+    } else if (this.SelectedFilter == 'Completed') {
+      this.getCompletedTasks();
+    } else if (this.SelectedFilter == 'Today') {
+      this.getTodayTasks();
+      this.groupBy = false;
+    } else {
+      this.groupBy = false;
+      this.getTasks();
+    }
+  }
+  getTodayTasks() {
+    this.tasks = this.tasks.filter(
+      (task) =>
+        new Date(task.dueDate).getDay() == new Date().getDay() &&
+        new Date(task.dueDate).getMonth() == new Date().getMonth() &&
+        new Date(task.dueDate).getFullYear() == new Date().getFullYear()
+    );
+
+    this.groupBy = false;
+  }
+  getCompletedTasks() {
+    this.tasks = this.tasks.filter((task) => task.completed == true);
+    this.groupBy = false;
+  }
+  groupByCategory() {
+    const groupedData = this.tasks.reduce((acc, item): object => {
+      const categoryId: string = item.categoryId;
+
+      if (!acc[categoryId]) {
+        acc[categoryId] = [];
+      }
+      acc[categoryId].push(item);
+      return acc;
+    }, [] as any);
+    return groupedData;
+  }
+  groupByDate() {
+    const groupedData = this.tasks.reduce((acc, item): object => {
+      const date: string = item.dueDate.toString().substring(0, 10);
+
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(item);
+      return acc;
+    }, [] as any);
+
+    // const filteredData = Object.entries(groupedData).reduce(
+    //   (acc, [key, value]: any) => {
+    //     const filteredValues = value.filter((item: any) =>
+    //       item.name.includes('asr1')
+    //     );
+    //     if (filteredValues.length > 0) {
+    //       acc[key] = filteredValues;
+    //     }
+    //     return acc;
+    //   },
+    //   [] as any
+    // );
+
+    return groupedData;
   }
 }

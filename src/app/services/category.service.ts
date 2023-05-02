@@ -13,7 +13,7 @@ export class CategoryService {
   // * get all categories * //
 
   async getCategories() {
-    return pb
+    return await pb
       .collection('categories')
       .getFullList({
         sort: '-created',
