@@ -32,6 +32,7 @@ import { AuthenticationComponent } from './authentication/authentication.compone
 import { CalenderComponent } from './calender/calender.component';
 import { CatNamePipe } from './cat-name.pipe';
 
+import { FullCalendarModule } from '@fullcalendar/angular';
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,6 +67,7 @@ import { CatNamePipe } from './cat-name.pipe';
     MatSelectModule,
     MatSnackBarModule,
     MatSidenavModule,
+    FullCalendarModule,
   ],
   exports: [
     BrowserModule,

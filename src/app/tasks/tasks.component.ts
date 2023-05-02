@@ -17,6 +17,7 @@ import { Category } from '../classes/category';
 export class TasksComponent implements OnInit {
   categoryId: string = this.route.snapshot.paramMap.get('id') || '';
   static categories: Category[] = [];
+  searchInput: string = '';
   tasks: Task[] = [];
   categoryName: string | undefined = '';
   notificationAudio = new Audio('/assets/sounds/notification.mp3');
@@ -57,11 +58,7 @@ export class TasksComponent implements OnInit {
   }
   //* check url for category id and fill the data based on that *//
   getTasks() {
-    if (this.categoryId == '') {
-      this.getAllTasks();
-    } else {
-      this.getTasksByCategory();
-    }
+    this.filterBy();
   }
   getTasksByCategory() {
     this.tasksService.getTasksByCategory(this.categoryId!).then((res) => {
@@ -82,8 +79,9 @@ export class TasksComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.tasksService.addTask(result);
-      this.ngOnInit();
+      this.tasksService.addTask(result).then((res) => {
+        this.getTasks();
+      });
     });
   }
   //* counting down timer for tasks *//
@@ -196,6 +194,20 @@ export class TasksComponent implements OnInit {
       });
     });
   }
+
+  //** duplicate task   */
+  duplicateTask(task_id: string) {
+    let task: Task = this.tasks.find((task) => task.id == task_id)!;
+    const dialogRef = this.dialog.open(AddTaskDialogComponent, {
+      data: task,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.tasksService.addTask(result).then(() => {
+        this.getTasks();
+      });
+    });
+  }
   // ** delete task */
   deleteTask(task_id: string) {
     if (confirm('You sure you want to delete this task')) {
@@ -212,20 +224,45 @@ export class TasksComponent implements OnInit {
   }
   //** filter tasks by    *//
   filterBy() {
-    if (this.SelectedFilter == 'GroupByDate') {
-      this.groupBy = true;
-      this.tasksGroupedBy = this.groupByDate();
-    } else if (this.SelectedFilter == 'GroupByCategory') {
-      this.groupBy = true;
-      this.tasksGroupedBy = this.groupByCategory();
-    } else if (this.SelectedFilter == 'Completed') {
-      this.getCompletedTasks();
-    } else if (this.SelectedFilter == 'Today') {
-      this.getTodayTasks();
-      this.groupBy = false;
+    if (this.categoryId == '') {
+      this.tasksService.getAllTasks().then((data) => {
+        this.tasks = data;
+        if (this.SelectedFilter == 'GroupByDate') {
+          this.groupBy = true;
+          this.tasksGroupedBy = this.groupByDate();
+        } else if (this.SelectedFilter == 'GroupByCategory') {
+          this.groupBy = true;
+          this.tasksGroupedBy = this.groupByCategory();
+        } else if (this.SelectedFilter == 'Completed') {
+          this.getCompletedTasks();
+        } else if (this.SelectedFilter == 'Today') {
+          this.getTodayTasks();
+          this.groupBy = false;
+        }
+      });
     } else {
-      this.groupBy = false;
-      this.getTasks();
+      console.log('id');
+
+      this.tasksService.getTasksByCategory(this.categoryId).then((data) => {
+        this.tasks = data;
+        if (this.SelectedFilter == 'GroupByDate') {
+          console.log('group by date');
+
+          this.groupBy = true;
+          this.tasksGroupedBy = this.groupByDate();
+        } else if (this.SelectedFilter == 'GroupByCategory') {
+          this.groupBy = true;
+          this.tasksGroupedBy = this.groupByCategory();
+        } else if (this.SelectedFilter == 'Completed') {
+          this.getCompletedTasks();
+        } else if (this.SelectedFilter == 'Today') {
+          this.getTodayTasks();
+          this.groupBy = false;
+        } else {
+          this.groupBy = false;
+          this.getAllTasks();
+        }
+      });
     }
   }
   getTodayTasks() {
@@ -265,19 +302,31 @@ export class TasksComponent implements OnInit {
       return acc;
     }, [] as any);
 
-    // const filteredData = Object.entries(groupedData).reduce(
-    //   (acc, [key, value]: any) => {
-    //     const filteredValues = value.filter((item: any) =>
-    //       item.name.includes('asr1')
-    //     );
-    //     if (filteredValues.length > 0) {
-    //       acc[key] = filteredValues;
-    //     }
-    //     return acc;
-    //   },
-    //   [] as any
-    // );
-
     return groupedData;
+  }
+  //* need to fix search function */
+  search() {
+    console.log('search');
+
+    if (this.groupBy == false) {
+      this.tasks = this.tasks.filter((task) =>
+        task.name.includes(this.searchInput)
+      );
+    } else {
+      const filteredData = Object.entries(this.tasksGroupedBy).reduce(
+        (acc, [key, value]: any) => {
+          const filteredValues = value.filter((item: any) =>
+            item.name.includes('asr1')
+          );
+          if (filteredValues.length > 0) {
+            acc[key] = filteredValues;
+          }
+          return acc;
+        },
+        [] as any
+      );
+
+      this.tasksGroupedBy = filteredData;
+    }
   }
 }

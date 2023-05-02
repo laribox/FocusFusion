@@ -106,8 +106,8 @@ export class TasksService {
 
   getTasksByStatus(status: string) {}
 
-  getAllTasks() {
-    return pb
+  async getAllTasks() {
+    return await pb
       .collection('tasks')
       .getFullList()
       .then((res) =>
