@@ -8,10 +8,16 @@
       </h1>
     </div>
   </div>
-  <div class="bg-violet-700 opacity-70 mr-4 rounded-lg mb-2">
+  <div
+    class="bg-violet-700 opacity-70 mr-4 rounded-lg mb-2 ring-2 ring-orange-600"
+  >
     <span
       class="text-white text-3xl font-extrabold px-3 mt-3 text-center align-middle"
-      >{{ date }}</span
+      >{{ date | date }}</span
+    >
+    <span
+      class="text-white text-3xl font-extrabold px-3 mt-3 text-center align-middle"
+      >{{ time }}</span
     >
   </div>
 </header>

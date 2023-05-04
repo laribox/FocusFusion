@@ -9,6 +9,7 @@ export class NavbarComponent implements OnInit, AfterViewInit {
   time: string = '';
   title: string = environment.title;
   icon: string = environment.icon;
+  date: Date = new Date();
   ngAfterViewInit(): void {}
   ngOnInit(): void {
     const currentDate = new Date();
