@@ -119,7 +119,7 @@
         </div>
         <div
           [routerLink]="['/authenticate']"
-          (click)="drawer.toggle()"
+          (click)="drawer.toggle(); logout()"
           class="w-full h-10 bg-slate-400 rounded-md flex space-x-4 justify-start items-center cursor-pointer hover:scale-105 hover:bg-slate-300 text-blue-500"
         >
           <div class="w-6 h-6 ml-2">
@@ -139,7 +139,7 @@
             </svg>
           </div>
 
-          <span>Authenticate </span>
+          <span>Logout </span>
         </div>
       </div>
     </div>
