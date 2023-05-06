@@ -2,7 +2,7 @@ export class Category {
   id: string;
   name: string;
   icon: string;
-  user_id: number;
+  user_id: string;
   created?: string;
   updated?: string;
 
@@ -10,7 +10,7 @@ export class Category {
     id: string,
     name: string,
     icon: string,
-    user_id: number,
+    user_id: string,
     created?: string,
     updated?: string
   ) {

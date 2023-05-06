@@ -77,7 +77,7 @@ export class CategoryComponent implements OnInit {
       '',
       this.categoryInput.value?.toString()!,
       this.SelectedIcon,
-      1
+      ''
     );
     this.categoryService.addCategory(category);
     this.categories.push(category);

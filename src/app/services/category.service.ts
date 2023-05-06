@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import PocketBase from 'pocketbase';
 import { Category } from '../classes/category';
-import { Observable, switchMap, timer } from 'rxjs';
+import { AuthenticationService } from './authentication.service';
 const pb = new PocketBase('http://localhost:8090');
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  constructor() {}
+  constructor(private authService: AuthenticationService) {}
 
   // * get all categories * //
 
@@ -17,6 +17,7 @@ export class CategoryService {
       .collection('categories')
       .getFullList({
         sort: '-created',
+        filter: `user_id = "${this.authService.authenticatedUserId()}"`,
       })
       .then((res) =>
         res.map(
@@ -58,6 +59,7 @@ export class CategoryService {
   // }
 
   async addCategory(category: Category) {
+    category.user_id = this.authService.authenticatedUserId() as string;
     const record = await pb.collection('categories').create(category);
   }
 

@@ -24,6 +24,7 @@ export class Task {
   recurrenceInterval: number;
   progress: string;
   completed?: boolean = false;
+  user_id?: string;
   created?: string;
   updated?: string;
 
@@ -40,6 +41,7 @@ export class Task {
     recurrenceInterval: number,
     progress: string,
     completed?: boolean,
+    user_id?: string,
     created?: string,
     updated?: string
   ) {
@@ -54,6 +56,7 @@ export class Task {
     this.recurrenceFrequency = recurrenceFrequency;
     this.recurrenceInterval = recurrenceInterval;
     this.progress = progress;
+    this.user_id = user_id;
     this.completed = completed;
     this.created = created;
     this.updated = updated;

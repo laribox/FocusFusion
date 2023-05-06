@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import PocketBase from 'pocketbase';
 import { Task } from '../classes/task';
+import { map } from 'rxjs';
+import { AuthenticationService } from './authentication.service';
 
 const pb = new PocketBase('http://localhost:8090');
 
@@ -8,67 +10,14 @@ const pb = new PocketBase('http://localhost:8090');
   providedIn: 'root',
 })
 export class TasksService {
-  constructor() {}
+  constructor(private authService: AuthenticationService) {}
 
-  //   new Task(
-  //     1,
-  //     'test',
-  //     '00:00:10',
-  //     new Date(),
-  //     { hours: 12, minutes: 30, seconds: 0 },
-  //     { hours: 13, minutes: 0, seconds: 0 },
-  //     '1',
-  //     false,
-  //     '',
-  //     0,
-  //     'in-progress'
-  //   ),
-  //   new Task(
-  //     2,
-  //     'test',
-  //     '00:30:00',
-  //     new Date(),
-  //     { hours: 12, minutes: 30, seconds: 0 },
-  //     { hours: 13, minutes: 0, seconds: 0 },
-  //     '1',
-  //     false,
-  //     '',
-  //     0,
-  //     'in-progress'
-  //   ),
-  //   new Task(
-  //     3,
-  //     'test',
-  //     '00:30:00',
-  //     new Date(),
-  //     { hours: 12, minutes: 30, seconds: 0 },
-  //     { hours: 13, minutes: 0, seconds: 0 },
-  //     '2',
-  //     false,
-  //     '',
-  //     0,
-  //     'in-progress'
-  //   ),
-  //   new Task(
-  //     4,
-  //     'test',
-  //     '00:30:00',
-  //     new Date(),
-  //     { hours: 12, minutes: 30, seconds: 0 },
-  //     { hours: 13, minutes: 0, seconds: 0 },
-  //     '1',
-  //     false,
-  //     '',
-  //     0,
-  //     'in-progress'
-  //   ),
-  // ];
   async getTasksByCategory(categoryId: string) {
     return await pb
       .collection('tasks')
       .getFullList({
         sort: 'created',
-        filter: `categoryId = "${categoryId}"`,
+        filter: `categoryId = "${categoryId}" && user_id = "${this.authService.authenticatedUserId()}"`,
       })
       .then((res) =>
         res.map(
@@ -94,7 +43,26 @@ export class TasksService {
   }
 
   async addTask(task: Task) {
-    return await pb.collection('tasks').create(task);
+    task.user_id = this.authService.authenticatedUserId();
+    if (task.id == '') {
+      console.log('empty');
+
+      return await pb.collection('tasks').create({
+        name: task.name,
+        duration: task.duration,
+        dueDate: task.dueDate,
+        startTime: task.startTime,
+        endTime: task.endTime,
+        categoryId: task.categoryId,
+        recurring: task.recurring,
+        recurrenceFrequency: task.recurrenceFrequency,
+        recurrenceInterval: task.recurrenceInterval,
+        progress: task.progress,
+        completed: task.completed,
+      });
+    } else {
+      return await pb.collection('tasks').create(task);
+    }
   }
   async editTask(RECORD_ID: string, task: Task) {
     return await pb.collection('tasks').update(RECORD_ID, task);
@@ -109,7 +77,10 @@ export class TasksService {
   async getAllTasks() {
     return await pb
       .collection('tasks')
-      .getFullList()
+      .getFullList({
+        sort: 'created',
+        filter: `user_id = "${this.authService.authenticatedUserId()}"`,
+      })
       .then((res) =>
         res.map(
           (element) =>
@@ -133,5 +104,32 @@ export class TasksService {
       );
   }
 
+  async getTasksByRecurrence() {
+    return await pb
+      .collection('tasks')
+      .getFullList({
+        sort: 'created',
+        filter: 'recurring =true',
+      })
+      .then((res) =>
+        res.map(
+          (element) =>
+            new Task(
+              element.id,
+              element['name'],
+              element['duration'],
+              element['dueDate'],
+              element['startTime'],
+              element['endTime'],
+              element['categoryId'],
+              element['recurring'],
+              element['recurrenceFrequency'],
+              element['recurrenceInterval'],
+              element['progress'],
+              element['completed']
+            )
+        )
+      );
+  }
   getTaskById(taskId: string) {}
 }

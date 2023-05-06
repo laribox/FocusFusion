@@ -32,10 +32,10 @@ export class AddTaskDialogComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe,
     public dialogRef: MatDialogRef<AddTaskDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: string
+    @Inject(MAT_DIALOG_DATA) public data: { type: string; task: any }
   ) {}
   ngOnInit(): void {
-    if (typeof this.data == 'string') {
+    if (this.data.type == 'add') {
       this.submitButtonValue = 'Save';
       this.taskForm = new FormGroup({
         name: new FormControl(''),
@@ -43,21 +43,41 @@ export class AddTaskDialogComponent implements OnInit, AfterViewInit {
         dueDate: new FormControl(''),
         startTime: new FormControl(''),
         endTime: new FormControl(''),
-        categoryId: new FormControl(this.data),
+        categoryId: new FormControl(this.data.task),
         recurring: new FormControl({ value: false, disabled: false }),
         recurrenceFrequency: new FormControl(''),
         recurrenceInterval: new FormControl(''),
         progress: new FormControl(''),
         completed: new FormControl({ value: false, disabled: false }, []),
       });
-    } else {
-      let task: Task = this.data;
+    } else if (this.data.type == 'update') {
+      let task: Task = this.data.task;
       let due_date = this.datePipe.transform(
         new Date(task.dueDate),
         'yyyy-MM-dd'
       );
 
       this.submitButtonValue = 'Update';
+      this.taskForm = new FormGroup({
+        name: new FormControl(task.name),
+        duration: new FormControl(task.duration),
+        dueDate: new FormControl(due_date),
+        startTime: new FormControl(task.startTime),
+        endTime: new FormControl(task.endTime),
+        categoryId: new FormControl(task.categoryId),
+        recurring: new FormControl(task.recurring),
+        recurrenceFrequency: new FormControl(task.recurrenceFrequency),
+        recurrenceInterval: new FormControl(task.recurrenceInterval),
+        progress: new FormControl(task.progress),
+        completed: new FormControl(task.completed),
+      });
+    } else if (this.data.type == 'duplicate') {
+      let task: Task = this.data.task;
+      let due_date = this.datePipe.transform(
+        new Date(task.dueDate),
+        'yyyy-MM-dd'
+      );
+      this.submitButtonValue = 'Save';
       this.taskForm = new FormGroup({
         name: new FormControl(task.name),
         duration: new FormControl(task.duration),

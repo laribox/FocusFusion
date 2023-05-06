@@ -45,7 +45,7 @@ export class TasksComponent implements OnInit {
       .then((data) => (TasksComponent.categories = data));
     this.getTasks();
   }
-
+  //* task accordion *//
   toggle(event: any) {
     let elementId: string = (event.target as Element).id;
     let div: any = document.querySelector('#task_' + elementId);
@@ -75,7 +75,7 @@ export class TasksComponent implements OnInit {
   //* Open add task dialog *//
   addTask() {
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
-      data: this.categoryId,
+      data: { type: 'add', task: this.categoryId },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -187,7 +187,7 @@ export class TasksComponent implements OnInit {
   editTask(task_id: string) {
     let task: Task = this.tasks.find((task) => task.id == task_id)!;
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
-      data: task,
+      data: { type: 'update', task: task },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -201,7 +201,7 @@ export class TasksComponent implements OnInit {
   duplicateTask(task_id: string) {
     let task: Task = this.tasks.find((task) => task.id == task_id)!;
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
-      data: task,
+      data: { type: 'duplicate', task: task },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -243,8 +243,6 @@ export class TasksComponent implements OnInit {
         }
       });
     } else {
-      console.log('id');
-
       this.tasksService.getTasksByCategory(this.categoryId).then((data) => {
         this.tasks = data;
         if (this.SelectedFilter == 'GroupByDate') {
